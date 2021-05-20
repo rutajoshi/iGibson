@@ -10,12 +10,21 @@ class Cube(Object):
     """
 
     def __init__(self, pos=[1, 2, 3], dim=[1, 2, 3], visual_only=False, mass=1000, color=[1, 1, 1, 1]):
+        """
+        CS331B: We have modified cube.py to be the dangerous object for DangerInteractiveNavRandomTask.
+        The agent learning that task should learn to avoid cubes.
+        """
         super(Cube, self).__init__()
         self.basePos = pos
         self.dimension = dim
         self.visual_only = visual_only
         self.mass = mass
-        self.color = color
+
+        self.collision_danger = np.random.rand() #0.75
+        self.color = [0, 0, self.collision_danger, 1]
+        # TODO: consider changing the mass so that the cube can suffer consequence
+        # you should likely be able to move it
+        # 1000 kg is definitely too high
 
     def _load(self):
         """

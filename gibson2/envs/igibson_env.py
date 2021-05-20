@@ -91,6 +91,8 @@ class iGibsonEnv(BaseEnv):
             self.task = PointNavRandomTask(self)
         elif self.config['task'] == 'interactive_nav_random':
             self.task = InteractiveNavRandomTask(self)
+        elif self.config['task'] == 'danger_interactive_nav_random': # Added for CS331B
+            self.task = DangerInteractiveNavRandomTask(self) # Added for CS331B
         elif self.config['task'] == 'dynamic_nav_random':
             self.task = DynamicNavRandomTask(self)
         elif self.config['task'] == 'social_nav_random':
