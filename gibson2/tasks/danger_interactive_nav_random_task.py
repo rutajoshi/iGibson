@@ -29,6 +29,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             'scene_episode_config_name', None)
 
         # TODO: Make another list of danger objects (populate with cubes)
+        self.dangerous_objects = []
 
         # Sanity check when loading our pre-sampled episodes
         # Make sure the task simulation configuration does not conflict
@@ -71,6 +72,9 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             env.simulator.import_object(obj)
             interactive_objects.append(obj)
         return interactive_objects
+
+    def reset_danger_objects(self, env):
+        return None
 
     def reset_interactive_objects(self, env):
         """
@@ -236,6 +240,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             env.robots[0].set_position_orientation(initial_pos, initial_orn)
 
         self.reset_interactive_objects(env)
+        self.reset_danger_objects(env) # Added for CS331B
         self.obj_disp_mass = 0.0
         self.ext_force_norm = 0.0
 
