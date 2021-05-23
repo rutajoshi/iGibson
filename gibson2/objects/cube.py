@@ -46,4 +46,5 @@ class Cube(Object):
         p.resetBasePositionAndOrientation(
             body_id, self.basePos, baseOrientation)
 
+        self.body_id = body_id # Added for CS331B
         return body_id

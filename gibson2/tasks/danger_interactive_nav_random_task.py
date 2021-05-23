@@ -6,6 +6,8 @@ import os
 import gibson2
 from gibson2.episodes.episode_sample import InteractiveNavEpisodesConfig
 
+from gibson2.objects.cube import Cube
+
 
 class DangerInteractiveNavRandomTask(PointNavRandomTask):
     """
@@ -30,6 +32,8 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
 
         # TODO: Make another list of danger objects (populate with cubes)
         self.dangerous_objects = []
+        self.object_collision_danger = {}
+        self.danger_metric = 0
 
         # Sanity check when loading our pre-sampled episodes
         # Make sure the task simulation configuration does not conflict
@@ -74,7 +78,55 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         return interactive_objects
 
     def reset_danger_objects(self, env):
-        return None
+        """
+        Reset the poses of dangerous objects to have no collisions with the scene or the robot
+
+        :param env: environment instance
+        """
+        shortest_path, geodesic_dist = self.get_shortest_path(
+            env, entire_path=True)
+
+        num_danger_objects = int(geodesic_dist)
+        for i in range(num_danger_objects):
+            mass = np.random.randint(5)
+            dim = [mass, mass, mass]
+            cube = Cube(dim=dim, mass=mass)
+            self.dangerous_objects.append(cube)
+
+        # Do this here, instead of in interactive objects function, so both get processed
+        self.obj_mass = self.get_obj_mass(env)
+        self.obj_body_ids = self.get_obj_body_ids(env)
+        self.object_collision_danger = self.get_obj_collision_danger(env)
+
+        max_trials = 100
+        for i, obj in enumerate(self.dangerous_objects):
+            # TODO: p.saveState takes a few seconds, need to speed up
+            state_id = p.saveState()
+            for _ in range(max_trials):
+                pos = shortest_path[np.random.randint(shortest_path.shape[0])]
+                pos += np.random.uniform(-0.5, 0.5, 2)
+                floor_height = env.scene.get_floor_height(self.floor_num)
+                pos = np.array([pos[0], pos[1], floor_height])
+                body_id = obj.body_id
+                dynamics_info = p.getDynamicsInfo(body_id, -1)
+                inertial_pos = dynamics_info[3]
+                pos, _ = p.multiplyTransforms(
+                    pos, [0, 0, 0, 1], inertial_pos, [0, 0, 0, 1])
+                orn = np.array([0, 0, np.random.uniform(0, np.pi * 2)])
+
+                reset_success = env.test_valid_position(obj, pos, orn)
+                p.restoreState(state_id)
+                if reset_success:
+                    break
+
+            if not reset_success:
+                print("WARNING: Failed to reset dangerous obj without collision")
+
+            env.land(obj, pos, orn)
+
+            # removed cached state to prevent memory leak
+            p.removeState(state_id)
+
 
     def reset_interactive_objects(self, env):
         """
@@ -88,7 +140,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         # The larger the geodesic distance is, the more interactive objects
         # we will spawn along the path (with some noise) to the goal.
         # TODO: reduce number of interactive objects to make space for cubes
-        num_interactive_objects = int(geodesic_dist / 0.5)
+        num_interactive_objects = int(geodesic_dist) #int(geodesic_dist / 0.5)
 
         # If use sampled episode, re-use saved interactive objects idx
         if self.offline_eval:
@@ -174,6 +226,12 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         for obj in self.interactive_objects:
             pos, _ = p.getBasePositionAndOrientation(obj.body_id)
             obj_pos.append(pos)
+
+        # Added for CS331B
+        for obj in self.dangerous_objects:
+            pos = obj.pos
+            obj_pos.append(pos)
+
         obj_pos = np.array(obj_pos)
         return obj_pos
 
@@ -193,6 +251,12 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         for obj in self.interactive_objects:
             mass = p.getDynamicsInfo(obj.body_id, -1)[0]
             obj_mass.append(mass)
+
+        # Added for CS331B
+        for obj in self.dangerous_objects:
+            mass = obj.mass
+            obj_mass.append(mass)
+
         obj_mass = np.array(obj_mass)
         return obj_mass
 
@@ -205,18 +269,27 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             body_ids.append(obj.body_ids[0])
         for obj in self.interactive_objects:
             body_ids.append(obj.body_id)
+
+        # Added for CS331B
+        for obj in self.dangerous_objects:
+            body_ids.append(obj.body_id)
+
         return body_ids
 
     # Added for CS331B
     def get_obj_collision_danger(self, env):
         # Get the collision danger for all scene objects and active interactive objects
+        collision_dangers = {}
         for _, obj in env.scene.objects_by_name.items():
             if obj.category in ['walls', 'floors', 'ceilings']:
                 continue
-            body_id = obj.body_ids[0]
-            # TODO: use the body id to retrieve the correct object information
-            # Go through the dangerous objects list and get danger values
-        return object_collision_danger_values
+            collision_dangers[obj.body_ids[0]] = 0
+        for obj in self.interactive_objects:
+            collision_dangers[obj.body_id] = 0
+        for obj in self.dangerous_objects:
+            collision_dangers[obj.body_id] = obj.collision_danger
+
+        return collision_dangers
 
     def reset_agent(self, env):
         """
@@ -265,12 +338,15 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             idx = self.obj_body_ids.index(obj_id)
             obj_dist = np.linalg.norm(self.obj_pos[idx] - new_obj_pos[idx])
             obj_disp_mass += obj_dist * self.obj_mass[idx]
+
+            # Added for CS331B
+            self.danger_metric += (self.object_collision_danger[obj_id] * obj_dist)
         self.obj_disp_mass += obj_disp_mass
         self.obj_pos = new_obj_pos
 
     def get_termination(self, env, collision_links=[], action=None, info={}):
         """
-        Aggreate termination conditions and fill info
+        Aggregate termination conditions and fill info
         """
         done, info = super(DangerInteractiveNavRandomTask, self).get_termination(
             env, collision_links, action, info)
@@ -287,11 +363,17 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             alpha = 0.5
             info['ins'] = alpha * info['path_efficiency'] + \
                 (1.0 - alpha) * info['effort_efficiency']
+
+            # Added for CS331B
+            info['danger_metric'] = self.danger_metric
         else:
             info['kinematic_disturbance'] = 0.0
             info['dynamic_disturbance'] = 0.0
             info['effort_efficiency'] = 0.0
             info['path_efficiency'] = 0.0
             info['ins'] = 0.0
+
+            # Added for CS331B
+            info['danger_metric'] = self.danger_metric
 
         return done, info
