@@ -117,6 +117,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
                 reset_success = env.test_valid_position(obj, pos, orn)
                 p.restoreState(state_id)
                 if reset_success:
+                    obj.pos = pos
                     break
 
             if not reset_success:
