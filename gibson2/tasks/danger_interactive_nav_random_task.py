@@ -258,7 +258,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
 
         # Added for CS331B
         for obj in self.dangerous_objects:
-            pos = obj.pos
+            pos, _ = p.getBasePositionAndOrientation(obj.body_id)
             obj_pos.append(pos)
 
         obj_pos = np.array(obj_pos)
