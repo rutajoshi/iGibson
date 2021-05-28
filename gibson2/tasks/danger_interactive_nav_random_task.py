@@ -58,7 +58,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
 
         total_num_danger_objects = 20 # TO DO: change this number based on the maximum distance occured from the robot to the goal
         
-        danger_objects = []
+        dangerous_objects = []
         for i in range(total_num_danger_objects):
             mass = np.random.randint(5)
             dim = [mass, mass, mass]
