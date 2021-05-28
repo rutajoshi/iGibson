@@ -60,8 +60,8 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         
         dangerous_objects = []
         for i in range(total_num_danger_objects):
-            mass = np.random.randint(5)
-            dim = [mass, mass, mass]
+            mass = np.random.randint(1, 5)
+            dim = [np.random.rand()/2+0.2, np.random.rand()/2+0.2, np.random.rand()+0.2]
             cube = Cube(dim=dim, mass=mass)
             env.simulator.import_object(cube)
             dangerous_objects.append(cube)
@@ -108,7 +108,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         shortest_path, geodesic_dist = self.get_shortest_path(
             env, entire_path=True)
 
-        num_danger_objects = int(geodesic_dist)
+        num_danger_objects = int(geodesic_dist*0.7)
 
         self.dangerous_objects_idx = np.random.choice(
                 np.arange(len(self.all_dangerous_objects)),
@@ -165,7 +165,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         # The larger the geodesic distance is, the more interactive objects
         # we will spawn along the path (with some noise) to the goal.
         # TODO: reduce number of interactive objects to make space for cubes
-        num_interactive_objects = int(geodesic_dist) #int(geodesic_dist / 0.5)
+        num_interactive_objects = int(geodesic_dist*0.3) #int(geodesic_dist / 0.5)
 
         # If use sampled episode, re-use saved interactive objects idx
         if self.offline_eval:
