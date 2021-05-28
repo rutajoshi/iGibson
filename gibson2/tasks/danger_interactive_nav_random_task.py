@@ -56,12 +56,12 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         create a bunch of objects (currently cubes) and load into the simulator
         """
 
-        total_num_danger_objects = 20 # TO DO: change this number based on the maximum distance occured from the robot to the goal
+        total_num_danger_objects = 10 # TO DO: change this number based on the maximum distance occured from the robot to the goal
         
         dangerous_objects = []
         for i in range(total_num_danger_objects):
             mass = np.random.randint(1, 5)
-            dim = [np.random.rand()/2+0.2, np.random.rand()/2+0.2, np.random.rand()+0.2]
+            dim = [np.random.rand()/2+0.2, np.random.rand()/2+0.2, np.random.rand()/2+0.2]
             cube = Cube(dim=dim, mass=mass)
             env.simulator.import_object(cube)
             dangerous_objects.append(cube)
@@ -108,7 +108,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         shortest_path, geodesic_dist = self.get_shortest_path(
             env, entire_path=True)
 
-        num_danger_objects = int(geodesic_dist*0.7)
+        num_danger_objects = int(geodesic_dist*0.5)
 
         self.dangerous_objects_idx = np.random.choice(
                 np.arange(len(self.all_dangerous_objects)),
