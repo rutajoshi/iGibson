@@ -31,6 +31,9 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             'scene_episode_config_name', None)
 
         # TODO: Make another list of danger objects (populate with cubes)
+        # Load all 20 training interactive objects
+        self.all_dangerous_objects = self.load_all_dangerous_objects(env)
+
         self.dangerous_objects = []
         self.object_collision_danger = {}
         self.danger_metric = 0
@@ -46,6 +49,25 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
                 raise ValueError("The scene to run the simulation in is '{}' from the " " \
                                 scene used to collect the episode samples".format(
                     env.scene.scene_id))
+
+    def load_all_dangerous_objects(self, env):
+        """
+        Added for CS331B:
+        create a bunch of objects (currently cubes) and load into the simulator
+        """
+
+        total_num_danger_objects = 20 # TO DO: change this number based on the maximum distance occured from the robot to the goal
+        
+        danger_objects = []
+        for i in range(total_num_danger_objects):
+            mass = np.random.randint(5)
+            dim = [mass, mass, mass]
+            cube = Cube(dim=dim, mass=mass)
+            env.simulator.import_object(cube)
+            dangerous_objects.append(cube)
+
+        return dangerous_objects
+
 
     def load_all_interactive_objects(self, env):
         """
@@ -87,11 +109,13 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
             env, entire_path=True)
 
         num_danger_objects = int(geodesic_dist)
-        for i in range(num_danger_objects):
-            mass = np.random.randint(5)
-            dim = [mass, mass, mass]
-            cube = Cube(dim=dim, mass=mass)
-            self.dangerous_objects.append(cube)
+
+        self.dangerous_objects_idx = np.random.choice(
+                np.arange(len(self.all_dangerous_objects)),
+                num_danger_objects, replace=False)
+        self.dangerous_objects = [
+            self.all_dangerous_objects[idx]
+            for idx in self.dangerous_objects_idx]
 
         # Do this here, instead of in interactive objects function, so both get processed
         self.obj_mass = self.get_obj_mass(env)
@@ -211,6 +235,10 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         # (in reset_interactive_objects)
         for i, obj in enumerate(self.all_interactive_objects):
             obj.set_position([100.0 + i, 100.0, 100.0])
+
+        # added for CS331B
+        for i, obj in enumerate(self.all_dangerous_objects):
+            obj.set_position([100.0, 100.0 + i, 100.0])
 
     def get_obj_pos(self, env):
         # Get object position for all scene objs and active interactive objs
