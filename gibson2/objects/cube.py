@@ -1,5 +1,5 @@
 import math
-
+import numpy as np
 from gibson2.objects.object_base import Object
 import pybullet as p
 
