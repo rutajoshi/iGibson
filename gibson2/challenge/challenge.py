@@ -3,6 +3,9 @@ import numpy as np
 import json
 import os
 from gibson2.envs.igibson_env import iGibsonEnv
+import cv2
+import glob
+
 import logging
 logging.getLogger().setLevel(logging.WARNING)
 
@@ -60,13 +63,22 @@ class Challenge:
                     pass
                 state = env.reset()
                 episode_return = 0.0
+
+
+                frameSize = (180, 320)
+                out = cv2.VideoWriter('output_video_epoch_'+str(idx)+'.avi',cv2.VideoWriter_fourcc(*'DIVX'), 30, frameSize)
+
                 while True:
                     action = env.action_space.sample()
                     action = agent.act(state)
+
+                    out.write(state['rgb'])
+
                     state, reward, done, info = env.step(action)
                     episode_return += reward
                     if done:
                         break
+                out.release()
 
                 metrics['episode_return'] += episode_return
                 for key in metrics:
