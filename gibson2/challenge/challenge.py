@@ -25,7 +25,7 @@ class Challenge:
         elif task == 'social_nav_random':
             metrics = {key: 0.0 for key in [
                 'success', 'stl', 'psc', 'episode_return']}
-        elif task == 'danger_interactive_nav_random_task':
+        elif task == 'danger_interactive_nav_random':
             metrics = {key: 0.0 for key in [
                 'success', 'spl', 'effort_efficiency', 'ins', 'episode_return']} # TO DO: change this to incorporate danger metric!
         else:
