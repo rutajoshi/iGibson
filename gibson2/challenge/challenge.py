@@ -65,8 +65,8 @@ class Challenge:
                 episode_return = 0.0
 
 
-                frameSize = (320, 180)
-                out = cv2.VideoWriter('output_video_epoch_'+str(idx)+'.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, frameSize)
+                # frameSize = (320, 180)
+                # out = cv2.VideoWriter('output_video_epoch_'+str(idx)+'.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, frameSize)
 
                 count=0
                 while True:
@@ -82,7 +82,7 @@ class Challenge:
                     count += 1
                     if done:
                         break
-                out.release()
+                # out.release()
 
                 metrics['episode_return'] += episode_return
                 for key in metrics:

@@ -21,7 +21,7 @@ class Cube(Object):
         self.mass = mass
 
         self.collision_danger = np.random.rand() #0.75
-        self.color = [0, 0, self.collision_danger, 1]
+        self.color = [self.collision_danger, 0, 0, 1]
         # TODO: consider changing the mass so that the cube can suffer consequence
         # you should likely be able to move it
         # 1000 kg is definitely too high
