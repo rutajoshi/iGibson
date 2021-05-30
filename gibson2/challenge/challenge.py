@@ -65,14 +65,14 @@ class Challenge:
                 episode_return = 0.0
 
 
-                frameSize = (180, 320)
+                frameSize = (180, 320, 3)
                 out = cv2.VideoWriter('output_video_epoch_'+str(idx)+'.avi',cv2.VideoWriter_fourcc(*'DIVX'), 30, frameSize)
 
                 while True:
                     action = env.action_space.sample()
                     action = agent.act(state)
 
-                    out.write(state['rgb'])
+                    out.write((state['rgb']*255).astype(np.uint8))
 
                     state, reward, done, info = env.step(action)
                     episode_return += reward
