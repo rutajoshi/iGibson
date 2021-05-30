@@ -13,7 +13,7 @@ class Challenge:
         self.split = os.environ['SPLIT']
         self.episode_dir = os.environ['EPISODE_DIR']
         self.eval_episodes_per_scene = os.environ.get(
-            'EVAL_EPISODES_PER_SCENE', 100)
+            'EVAL_EPISODES_PER_SCENE', 10)
 
     def submit(self, agent):
         env_config = parse_config(self.config_file)
@@ -47,7 +47,7 @@ class Challenge:
             env_config['load_scene_episode_config'] = True
             env_config['scene_episode_config_name'] = json_file
             env = iGibsonEnv(config_file=env_config,
-                             mode='headless',
+                             mode='gui',
                              action_timestep=1.0 / 10.0,
                              physics_timestep=1.0 / 40.0)
 
