@@ -53,8 +53,6 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
                                 scene used to collect the episode samples".format(
                     env.scene.scene_id))
 
-        self.reset_agent(env)
-
 
     def load_all_dangerous_objects(self, env):
         """
