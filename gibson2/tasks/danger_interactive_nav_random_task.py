@@ -320,9 +320,9 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         # Get the collision danger for all scene objects and active interactive objects
         collision_dangers = {}
         for _, obj in env.scene.objects_by_name.items():
-            collision_dangers[obj.body_id] = 0
-            # if obj.category in ['walls', 'floors', 'ceilings']:
-            #     continue
+            if obj.category in ['walls', 'floors', 'ceilings']:
+                continue
+            collision_dangers[obj.body_ids[0]] = 0
         for obj in self.interactive_objects:
             collision_dangers[obj.body_id] = 0
         for obj in self.dangerous_objects:
