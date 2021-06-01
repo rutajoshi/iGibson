@@ -38,7 +38,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         self.dangerous_objects = []
         self.object_collision_danger = {}
         self.danger_metric = 0
-        
+
         self.reward_functions.append(DangerReward(self.config))
 
         # Sanity check when loading our pre-sampled episodes
@@ -243,6 +243,8 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         # added for CS331B
         for i, obj in enumerate(self.all_dangerous_objects):
             obj.set_position([100.0, 100.0 + i, 100.0])
+
+        self.danger_metric = 0
 
     def get_obj_pos(self, env):
         # Get object position for all scene objs and active interactive objs
