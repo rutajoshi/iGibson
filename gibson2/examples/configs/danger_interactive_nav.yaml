@@ -21,7 +21,7 @@ velocity: 1.0
 # task
 task: danger_interactive_nav_random
 target_dist_min: 1.0
-target_dist_max: 10.0
+target_dist_max: 6.0
 goal_format: polar
 task_obs_dim: 4
 waypoint_resolution: 0.1
@@ -29,7 +29,7 @@ waypoint_resolution: 0.1
 # reward
 reward_type: geodesic
 success_reward: 10.0
-potential_reward_weight: 1.0
+potential_reward_weight: 3.0
 collision_reward_weight: -0.1
 danger_reward_weight: -0.25
 
@@ -37,16 +37,16 @@ danger_reward_weight: -0.25
 discount_factor: 0.99
 
 # termination condition
-dist_tol: 0.36  # body width
-max_step: 500
-max_collisions_allowed: 500
+dist_tol: 1.0  # body width
+max_step: 300
+max_collisions_allowed: 300
 
 # misc config
 initial_pos_z_offset: 0.1
 collision_ignore_link_a_ids: [1, 2, 3, 4]  # ignore collisions with these robot links
 
 # sensor spec
-output: [task_obs, rgb, depth, scan]
+output: [task_obs, rgb, depth]
 # image
 # ASUS Xtion PRO LIVE
 # https://www.asus.com/us/3D-Sensor/Xtion_PRO_LIVE

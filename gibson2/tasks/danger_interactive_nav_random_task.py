@@ -5,6 +5,7 @@ import numpy as np
 import os
 import gibson2
 from gibson2.episodes.episode_sample import InteractiveNavEpisodesConfig
+from gibson2.reward_functions.danger_reward import DangerReward
 
 from gibson2.objects.cube import Cube
 
@@ -37,6 +38,8 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         self.dangerous_objects = []
         self.object_collision_danger = {}
         self.danger_metric = 0
+        
+        self.reward_functions.append(DangerReward(self.config))
 
         # Sanity check when loading our pre-sampled episodes
         # Make sure the task simulation configuration does not conflict
@@ -49,6 +52,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
                 raise ValueError("The scene to run the simulation in is '{}' from the " " \
                                 scene used to collect the episode samples".format(
                     env.scene.scene_id))
+
 
     def load_all_dangerous_objects(self, env):
         """
