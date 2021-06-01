@@ -45,7 +45,7 @@ class DangerReward(BaseRewardFunction):
         for obj_id in collision_objects:
             # TODO: find out how to get object collision danger from collision_links
             # Object id can be used to find object in the environment
-            if obj_id == 1:
+            if obj_id == 1 or obj_id == 0:
                 continue
             object_collision_danger.append(collided_objs_danger[obj_id])
             
