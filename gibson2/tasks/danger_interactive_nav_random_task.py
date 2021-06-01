@@ -109,6 +109,10 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
 
         :param env: environment instance
         """
+        self.dangerous_objects = []
+        self.object_collision_danger = {}
+        self.danger_metric = 0
+        
         shortest_path, geodesic_dist = self.get_shortest_path(
             env, entire_path=True)
 
@@ -243,8 +247,6 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         # added for CS331B
         for i, obj in enumerate(self.all_dangerous_objects):
             obj.set_position([100.0, 100.0 + i, 100.0])
-
-        self.danger_metric = 0
 
     def get_obj_pos(self, env):
         # Get object position for all scene objs and active interactive objs

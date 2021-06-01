@@ -37,10 +37,14 @@ class DangerReward(BaseRewardFunction):
         # 2) If collision, for each collision link, find out collision danger of each object
         object_collision_danger = []
         collision_objects = set([col[2] for col in env.collision_links])
+        danger_object_ids = [obj.body_id for obj in task.dangerous_objects]
         for obj_id in collision_objects:
             # TODO: find out how to get object collision danger from collision_links
             # Object id can be used to find object in the environment
             object_collision_danger.append(task.object_collision_danger[obj_id])
+            if (obj_id not in danger_object_ids):
+                continue
+            assert(obj_id in danger_object_ids and obj_id in task.object_collision_danger)
 
         # 3) Compute danger reward
         reward = 0
