@@ -38,6 +38,8 @@ class DangerReward(BaseRewardFunction):
         object_collision_danger = []
         collided_objs_danger = task.get_obj_collision_danger(env)
         collision_objects = set([col[2] for col in env.collision_links])
+        print(collision_objects)
+        print(collided_objs_danger)
 
         for obj_id in collision_objects:
             # TODO: find out how to get object collision danger from collision_links
