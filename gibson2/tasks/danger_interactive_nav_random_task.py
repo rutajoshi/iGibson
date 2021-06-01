@@ -53,6 +53,8 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
                                 scene used to collect the episode samples".format(
                     env.scene.scene_id))
 
+        self.reset_agent(env)
+
 
     def load_all_dangerous_objects(self, env):
         """
@@ -112,7 +114,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         self.dangerous_objects = []
         self.object_collision_danger = {}
         self.danger_metric = 0
-        
+
         shortest_path, geodesic_dist = self.get_shortest_path(
             env, entire_path=True)
 
