@@ -29,7 +29,7 @@ waypoint_resolution: 0.1
 # reward
 reward_type: geodesic
 success_reward: 10.0
-potential_reward_weight: 3.0
+potential_reward_weight: 10.0
 collision_reward_weight: -0.1
 danger_reward_weight: -0.2
 
@@ -46,7 +46,7 @@ initial_pos_z_offset: 0.1
 collision_ignore_link_a_ids: [1, 2, 3, 4]  # ignore collisions with these robot links
 
 # sensor spec
-output: [task_obs, rgb, depth]
+output: [task_obs, rgb, depth, scan]
 # image
 # ASUS Xtion PRO LIVE
 # https://www.asus.com/us/3D-Sensor/Xtion_PRO_LIVE

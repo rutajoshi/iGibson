@@ -64,10 +64,10 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         
         dangerous_objects = []
         for i in range(total_num_danger_objects):
-            mass = np.random.randint(1, 5)
+            mass = np.random.randint(1, 5)/3
             dim = [np.random.rand()/5+0.1, np.random.rand()/5+0.1, np.random.rand()/5+0.3]
             cube = Cube(dim=dim, mass=mass)
-            env.simulator.import_object(cube)
+            env.simulator.import_object(cube, use_pbr=False, use_pbr_mapping=False)
             dangerous_objects.append(cube)
 
         return dangerous_objects
