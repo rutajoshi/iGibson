@@ -319,6 +319,7 @@ class DangerInteractiveNavRandomTask(PointNavRandomTask):
         collision_dangers = {}
         for _, obj in env.scene.objects_by_name.items():
             if obj.category in ['walls', 'floors', 'ceilings']:
+                print("walls, floors, ceilings: ", obj.body_ids)
                 continue
             collision_dangers[obj.body_ids[0]] = 0
         for obj in self.interactive_objects:
