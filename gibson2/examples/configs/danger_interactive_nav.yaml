@@ -37,7 +37,7 @@ danger_reward_weight: -0.2
 discount_factor: 0.99
 
 # termination condition
-dist_tol: 1.0  # body width
+dist_tol: 0.36  # body width
 max_step: 300
 max_collisions_allowed: 300
 
